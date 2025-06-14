@@ -1,43 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator</title>
+  <style>
+    :root {
+      --bg-color: #f4f4f9;
+      --text-color: #000;
+      --box-color: #fff;
+      --button-bg: #fff;
+      --button-text: #000;
+      --button-border: #222;
+    }
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    body.dark {
+      --bg-color: #000;
+      --text-color: #fff;
+      --box-color: #000;
+      --button-bg: #fff;
+      --button-text: #000;
+      --button-border: #333;
+    }
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    * {
+      box-sizing: border-box;
+    }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: Arial, sans-serif;
+      width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .container {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+
+    .theme-toggle button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--button-border);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .theme-toggle button:hover {
+      opacity: 0.9;
+    }
+
+    .calculator-box {
+      background-color: var(--box-color);
+      border-radius: 10px;
+      padding: 20px;
+      width: 600px;
+      max-width: 100vw;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      font-weight: normal;
+      font-size: 1.5rem;
+      margin: 0;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 5px;
+      margin-bottom: 12px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--button-border);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .result {
+      margin-top: 16px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    footer {
+      flex-shrink: 0;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-size: 0.9rem;
+      user-select: none;
+      width: 100vw;
+    }
+
+    @media (max-width: 768px) {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      .container,
+      .calculator-box {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+      }
+
+      .calculator-box {
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-toggle">
+    <button onclick="toggleTheme()">Light/Dark</button>
+  </div>
+  <div class="container">
+    <div class="calculator-box" id="dayCalculator">
+      <h2>Day of the Week Calculator</h2>
+      <label for="month">Select Month:</label>
+      <select id="month">
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+      <label for="day">Select Day:</label>
+      <select id="day"></select>
+      <label for="year">Select Year (1 - 3000):</label>
+      <select id="year"></select>
+      <div class="button-group">
+        <button id="calculateButton">Calculate</button>
+        <button id="randomDateButton">Random</button>
+      </div>
+      <div class="result" id="result"></div>
+    </div>
+
+    <div class="calculator-box" id="wordCalculator">
+      <h2>Word Value Calculator</h2>
+      <label for="wordInput">Enter a Word:</label>
+      <input type="text" id="wordInput" placeholder="Enter word here" />
+      <div class="button-group">
+        <button id="wordValueButton">Calculate</button>
+        <button id="randomWordButton">Random</button>
+      </div>
+      <div class="result" id="wordValueResult"></div>
+    </div>
+  </div>
+  <footer>
+    &copy; 2025 Dominique Castaneda. All Rights Reserved.
+  </footer>
+  <script>
+    const yearSelect = document.getElementById('year');
+    const monthSelect = document.getElementById('month');
+    const daySelect = document.getElementById('day');
+
+    for (let y = 1; y <= 3000; y++) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSelect.appendChild(opt);
+    }
+
+    function getDaysInMonth(year, month) {
+      return new Date(year, month, 0).getDate();
+    }
+
+    function updateDayOptions() {
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      const prevSelectedDay = parseInt(daySelect.value);
+      const days = getDaysInMonth(year, month);
+      daySelect.innerHTML = '';
+      for (let d = 1; d <= days; d++) {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        daySelect.appendChild(opt);
+      }
+      if (prevSelectedDay && prevSelectedDay <= days) {
+        daySelect.value = prevSelectedDay;
+      } else {
+        daySelect.value = 1;
+      }
+    }
+
+    function getWeekday(year, month, day) {
+      if (month < 3) {
+        month += 12;
+        year -= 1;
+      }
+      const K = year % 100;
+      const J = Math.floor(year / 100);
+      let h = (day + Math.floor(13 * (month + 1) / 5) + K + Math.floor(K / 4) +
+        Math.floor(J / 4) + 5 * J) % 7;
+      return (h + 6) % 7;
+    }
+
+    function showResult() {
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      const day = parseInt(daySelect.value);
+      const weekdayNumber = getWeekday(year, month, day);
+      const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const weekday = weekdayNames[weekdayNumber];
+      const monthName = new Date(2000, month - 1).toLocaleString('default', { month: 'long' });
+      document.getElementById('result').textContent = `${monthName} ${day}, ${year} is a ${weekday}.`;
+    }
+
+    function calculateWordValue() {
+      const input = document.getElementById('wordInput').value;
+      const cleanedInput = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      let total = 0;
+      for (const char of cleanedInput) {
+        if (char >= 'A' && char <= 'Z') {
+          total += char.charCodeAt(0) - 64;
+        } else if (!isNaN(char)) {
+          total += parseInt(char);
+        }
+      }
+      document.getElementById('wordValueResult').textContent = `Word Value: ${total}`;
+    }
+
+    function generateRandomDate() {
+      const randomYear = Math.floor(Math.random() * 3000) + 1;
+      const randomMonth = Math.floor(Math.random() * 12) + 1;
+      const randomDay = Math.floor(Math.random() * getDaysInMonth(randomYear, randomMonth)) + 1;
+      yearSelect.value = randomYear;
+      monthSelect.value = randomMonth;
+      updateDayOptions();
+      daySelect.value = randomDay;
+      document.getElementById('result').textContent = '';
+    }
+
+    function generateRandomWord() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      let result = '';
+      const length = Math.floor(Math.random() * 6) + 3;
+      for (let i = 0; i < length; i++) {
+        result += Math.random() < 0.3 ? numbers[Math.floor(Math.random() * numbers.length)] : letters[Math.floor(Math.random() * letters.length)];
+      }
+      document.getElementById('wordInput').value = result;
+      document.getElementById('wordValueResult').textContent = '';
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+    }
+
+    yearSelect.addEventListener('change', updateDayOptions);
+    monthSelect.addEventListener('change', updateDayOptions);
+    document.getElementById('calculateButton').addEventListener('click', showResult);
+    document.getElementById('wordValueButton').addEventListener('click', calculateWordValue);
+    document.getElementById('randomDateButton').addEventListener('click', generateRandomDate);
+    document.getElementById('randomWordButton').addEventListener('click', generateRandomWord);
+
+    updateDayOptions();
+  </script>
+</body>
 </html>
+
