@@ -65,12 +65,14 @@
       height: 100vh;
     }
 
-    .calculator-box {
+    .container > .calculator-box {
+      flex: 1 1 0;
+      height: auto;
+      min-height: 0;
       background-color: var(--box-color);
       border-radius: 0;
       padding: 20px;
       width: 100vw;
-      height: 50vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -145,22 +147,9 @@
     }
 
     @media (max-width: 768px) {
-      .calculator-box {
+      .container > .calculator-box {
         padding-left: 20px;
         padding-right: 20px;
-      }
-    }
-
-    @media (orientation: landscape) and (max-width: 768px) {
-      .container {
-        overflow-y: auto;
-        height: auto;
-        min-height: 100vh;
-      }
-
-      .calculator-box {
-        height: auto;
-        min-height: 50vh;
       }
     }
   </style>
